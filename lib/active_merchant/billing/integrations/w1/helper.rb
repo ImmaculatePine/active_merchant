@@ -10,9 +10,9 @@ module ActiveMerchant #:nodoc:
           end
 
           def form_fields
-            @md5_secret ? 
-              @fields.merge(ActiveMerchant::Billing::Integrations::W1.signature_parameter_name => generate_signature) :
-              @fields
+            @md5_secret.nil? ? 
+              @fields :
+              @fields.merge(ActiveMerchant::Billing::Integrations::W1.signature_parameter_name => generate_signature)
           end
             
           def generate_signature_string
