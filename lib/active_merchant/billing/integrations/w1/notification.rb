@@ -59,7 +59,7 @@ module ActiveMerchant #:nodoc:
             data = data.sort
             values = data.map {|key,val| val}
             signature_string = [values, @options[:secret]].flatten.join
-            encode_string(signature_string)
+            # encode_string(signature_string)
           end
           
           def generate_signature
