@@ -58,7 +58,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def credit(money, authorization, options = {})
-        deprecated CREDIT_DEPRECATION_MESSAGE
+        ActiveMerchant.deprecated CREDIT_DEPRECATION_MESSAGE
         refund(money, authorization, options)
       end
 
@@ -105,12 +105,6 @@ module ActiveMerchant #:nodoc:
         post[:ccnumber] = creditcard.number
         post[:ccexp] = expdate(creditcard)
         post[:cvv] = creditcard.verification_value
-      end
-
-      def expdate(creditcard)
-        year  = sprintf("%.4i", creditcard.year)
-        month = sprintf("%.2i", creditcard.month)
-        "#{month}#{year[-2..-1]}"
       end
 
       def parse(body)

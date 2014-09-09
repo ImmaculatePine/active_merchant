@@ -97,6 +97,17 @@ class StripeTest < Test::Unit::TestCase
     assert response.test?
   end
 
+  def test_amount_localization
+    @gateway.expects(:ssl_request).returns(successful_purchase_response(true))
+    @gateway.expects(:post_data).with do |params|
+      assert_equal '4', params[:amount]
+    end
+
+    @options[:currency] = 'JPY'
+
+    @gateway.purchase(@amount, @credit_card, @options)
+  end
+
   def test_successful_purchase_with_token
     response = stub_comms(@gateway, :ssl_request) do
       @gateway.purchase(@amount, "tok_xxx")
@@ -383,6 +394,63 @@ class StripeTest < Test::Unit::TestCase
     @gateway.authorize(@amount, @credit_card, @options)
   end
 
+  def test_recurring_flag_not_set_by_default
+    @gateway.expects(:ssl_request).with do |method, url, post, headers|
+      assert !post.include?("recurring")
+    end.returns(successful_authorization_response)
+
+    @gateway.authorize(@amount, @credit_card, @options)
+  end
+
+  def test_passing_recurring_eci_sets_recurring_flag
+    @gateway.expects(:ssl_request).with do |method, url, post, headers|
+      assert post.include?("recurring=true")
+    end.returns(successful_authorization_response)
+
+    @options.merge!(eci: 'recurring')
+
+    @gateway.authorize(@amount, @credit_card, @options)
+  end
+
+  def test_passing_unknown_eci_does_not_set_recurring_flag
+    @gateway.expects(:ssl_request).with do |method, url, post, headers|
+      assert !post.include?("recurring")
+    end.returns(successful_authorization_response)
+
+    @options.merge!(eci: 'installment')
+
+    @gateway.authorize(@amount, @credit_card, @options)
+  end
+
+  def test_passing_recurring_true_option_sets_recurring_flag
+    @gateway.expects(:ssl_request).with do |method, url, post, headers|
+      assert post.include?("recurring=true")
+    end.returns(successful_authorization_response)
+
+    @options.merge!(recurring: true)
+
+    @gateway.authorize(@amount, @credit_card, @options)
+  end
+
+  def test_passing_recurring_false_option_does_not_set_recurring_flag
+    @gateway.expects(:ssl_request).with do |method, url, post, headers|
+      assert !post.include?("recurring")
+    end.returns(successful_authorization_response)
+
+    @options.merge!(recurring: false)
+
+    @gateway.authorize(@amount, @credit_card, @options)
+  end
+
+  def test_new_attributes_are_included_in_update
+    stub_comms(@gateway, :ssl_request) do
+      @gateway.send(:update, "cus_3sgheFxeBgTQ3M", "card_483etw4er9fg4vF3sQdrt3FG", { :name => "John Smith", :exp_year => 2021, :exp_month => 6 })
+    end.check_request do |method, endpoint, data, headers|
+      assert data == "name=John+Smith&exp_year=2021&exp_month=6"
+      assert endpoint.include? "/customers/cus_3sgheFxeBgTQ3M/cards/card_483etw4er9fg4vF3sQdrt3FG"
+    end.respond_with(successful_update_credit_card_response)
+  end
+
   private
 
   # Create new customer and set default credit card
@@ -636,6 +704,31 @@ class StripeTest < Test::Unit::TestCase
     RESPONSE
   end
 
+  def successful_update_credit_card_response
+    <<-RESPONSE
+    {
+      "id": "card_483etw4er9fg4vF3sQdrt3FG",
+      "object": "card",
+      "last4": "4242",
+      "type": "Visa",
+      "exp_month": 6,
+      "exp_year": 2021,
+      "fingerprint": "5dgRQ3dVRGaQWDFb",
+      "customer": "cus_3sgheFxeBgTQ3M",
+      "country": "US",
+      "name": "John Smith",
+      "address_line1": null,
+      "address_line2": null,
+      "address_city": null,
+      "address_state": null,
+      "address_zip": null,
+      "address_country": null,
+      "cvc_check": null,
+      "address_line1_check": null,
+      "address_zip_check": null
+    }
+    RESPONSE
+  end
   # Place raw invalid JSON from gateway here
   def invalid_json_response
     <<-RESPONSE

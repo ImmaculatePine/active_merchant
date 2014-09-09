@@ -54,8 +54,12 @@ module ActiveMerchant #:nodoc:
         commit(:capture, money, options)
       end
 
-      def purchase(money, creditcard, options = {})
-        options[:credit_card] = creditcard
+      def purchase(money, payment_method, options = {})
+        if payment_method.respond_to?(:number)
+          options[:credit_card] = payment_method
+        else
+          options[:preauthorization] = payment_method
+        end
         commit(:purchase, money, options)
       end
 
@@ -107,8 +111,8 @@ module ActiveMerchant #:nodoc:
         Response.new(success, message, response,
           :test => test?,
           :authorization => authorization,
-          :avs_result => { :code => response[:avsCode] },
-          :cvv_result => response[:cvCode]
+          :avs_result => { :code => avs_code(response, options) },
+          :cvv_result => response[:CVCResponseCode]
         )
       rescue ResponseError => e
         if e.response.code == "401"
@@ -149,7 +153,11 @@ module ActiveMerchant #:nodoc:
             case options[:action]
             when :preauthorization, :purchase
               add_invoice(xml, money, options)
-              add_creditcard(xml, options[:credit_card])
+              if options[:credit_card]
+                add_creditcard(xml, options[:credit_card])
+              else
+                xml.tag! 'GuWID', options[:preauthorization]
+              end
               add_address(xml, options[:billing_address])
             when :capture, :bookback
               xml.tag! 'GuWID', options[:preauthorization]
@@ -239,22 +247,34 @@ module ActiveMerchant #:nodoc:
       # Parse the <ProcessingStatus> Element which contains all important information
       def parse_response(response, root)
         status = nil
-        # get the root element for this Transaction
+
         root.elements.to_a.each do |node|
           if node.name =~ /FNC_CC_/
             status = REXML::XPath.first(node, "CC_TRANSACTION/PROCESSING_STATUS")
           end
         end
+
         message = ""
         if status
           if info = status.elements['Info']
             message << info.text
           end
-          # Get basic response information
+
           status.elements.to_a.each do |node|
-            response[node.name.to_sym] = (node.text || '').strip
+            if (node.elements.size == 0)
+              response[node.name.to_sym] = (node.text || '').strip
+            else
+              node.elements.each do |childnode|
+                name = "#{node.name}_#{childnode.name}"
+                response[name.to_sym] = (childnode.text || '').strip
+              end
+            end
           end
+
+          error_code = REXML::XPath.first(status, "ERROR/Number")
+          response['ErrorCode'] = error_code.text if error_code
         end
+
         parse_error(root, message)
         response[:Message] = message
       end
@@ -296,6 +316,28 @@ module ActiveMerchant #:nodoc:
           end
         end
         string
+      end
+
+      # Amex have different AVS response codes
+      AMEX_TRANSLATED_AVS_CODES = {
+        "A" => "B", # CSC and Address Matched
+        "F" => "D", # All Data Matched
+        "N" => "I", # CSC Match
+        "U" => "U", # Data Not Checked
+        "Y" => "D", # All Data Matched
+        "Z" => "P", # CSC and Postcode Matched
+        "F" => "D"  # Street address and zip code match
+      }
+
+      # Amex have different AVS response codes to visa etc
+      def avs_code(response, options)
+        if response.has_key?(:AVS_ProviderResultCode)
+          if options[:credit_card].present? && ActiveMerchant::Billing::CreditCard.brand?(options[:credit_card].number) == "american_express"
+            AMEX_TRANSLATED_AVS_CODES[response[:AVS_ProviderResultCode]]
+          else
+            response[:AVS_ProviderResultCode]
+          end
+        end
       end
 
       # Encode login and password in Base64 to supply as HTTP header

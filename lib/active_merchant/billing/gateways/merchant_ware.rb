@@ -105,7 +105,7 @@ module ActiveMerchant #:nodoc:
       #   * <tt>:order_id</tt> - A unique reference for this order (required when performing a non-referenced credit)
       def credit(money, identification, options = {})
         if identification.is_a?(String)
-          deprecated CREDIT_DEPRECATION_MESSAGE
+          ActiveMerchant.deprecated CREDIT_DEPRECATION_MESSAGE
           refund(money, identification, options)
         else
           perform_credit(money, identification, options)
@@ -197,13 +197,6 @@ module ActiveMerchant #:nodoc:
         xml.tag! "strSiteId", @options[:login]
         xml.tag! "strKey", @options[:password]
         xml.tag! "strName", @options[:name]
-      end
-
-      def expdate(credit_card)
-        year  = sprintf("%.4i", credit_card.year)
-        month = sprintf("%.2i", credit_card.month)
-
-        "#{month}#{year[-2..-1]}"
       end
 
       def add_invoice(xml, options)

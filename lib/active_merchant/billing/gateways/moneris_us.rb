@@ -71,7 +71,7 @@ module ActiveMerchant #:nodoc:
       # Moneris interface consistent with other gateways. (See +capture+ for
       # details.)
       def credit(money, authorization, options = {})
-        deprecated CREDIT_DEPRECATION_MESSAGE
+        ActiveMerchant.deprecated CREDIT_DEPRECATION_MESSAGE
         refund(money, authorization, options)
       end
 
@@ -176,16 +176,6 @@ module ActiveMerchant #:nodoc:
       def message_from(message)
         return 'Unspecified error' if message.blank?
         message.gsub(/[^\w]/, ' ').split.join(" ").capitalize
-      end
-
-      # Make a Ruby type out of the response string
-      def normalize(field)
-        case field
-          when "true"     then true
-          when "false"    then false
-          when '', "null" then nil
-          else field
-        end
       end
 
       def actions

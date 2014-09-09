@@ -90,18 +90,32 @@ class CreditCardTest < Test::Unit::TestCase
     @visa.brand = 'master'
 
     assert_not_valid @visa
-    assert_not_equal @visa.errors.on(:number), @visa.errors.on(:brand)
+    assert_false @visa.errors.on(:number)
+    assert @visa.errors.on(:brand)
+    assert_equal "does not match the card number", @visa.errors.on(:brand)
   end
 
   def test_should_be_invalid_when_brand_cannot_be_detected
-    @visa.number = nil
     @visa.brand = nil
 
+    @visa.number = nil
     assert_not_valid @visa
-    assert !@visa.errors.on(:brand)
-    assert !@visa.errors.on(:type)
+    assert_false @visa.errors.on(:brand)
+    assert_false @visa.errors.on(:type)
     assert @visa.errors.on(:number)
     assert_equal 'is required', @visa.errors.on(:number)
+
+    @visa.number = "11112222333344ff"
+    assert_not_valid @visa
+    assert_false @visa.errors.on(:type)
+    assert_false @visa.errors.on(:brand)
+    assert       @visa.errors.on(:number)
+
+    @visa.number = "11112222333344444"
+    assert_not_valid @visa
+    assert_false @visa.errors.on(:brand)
+    assert_false @visa.errors.on(:type)
+    assert @visa.errors.on(:number)
   end
 
   def test_should_be_a_valid_card_number
@@ -254,12 +268,12 @@ class CreditCardTest < Test::Unit::TestCase
     ccn = CreditCard.new(:number => "1")
     assert_equal "1", ccn.last_digits
   end
-  
+
   def test_should_return_first_four_digits_of_card_number
     ccn = CreditCard.new(:number => "4779139500118580")
     assert_equal "477913", ccn.first_digits
   end
-  
+
   def test_should_return_first_bogus_digit_of_card_number
     ccn = CreditCard.new(:number => "1")
     assert_equal "1", ccn.first_digits
@@ -370,13 +384,37 @@ class CreditCardTest < Test::Unit::TestCase
     assert !card.valid?
     assert_equal "", card.number
   end
-  
+
   def test_brand_is_aliased_as_type
-    assert_deprecation_warning("CreditCard#type is deprecated and will be removed from a future release of ActiveMerchant. Please use CreditCard#brand instead.", CreditCard) do
+    assert_deprecation_warning("CreditCard#type is deprecated and will be removed from a future release of ActiveMerchant. Please use CreditCard#brand instead.") do
       assert_equal @visa.type, @visa.brand
     end
-    assert_deprecation_warning("CreditCard#type is deprecated and will be removed from a future release of ActiveMerchant. Please use CreditCard#brand instead.", CreditCard) do
+    assert_deprecation_warning("CreditCard#type is deprecated and will be removed from a future release of ActiveMerchant. Please use CreditCard#brand instead.") do
       assert_equal @solo.type, @solo.brand
     end
+  end
+
+  def test_month_and_year_are_immediately_converted_to_integers
+    card = CreditCard.new
+
+    card.month = "1"
+    assert_equal 1, card.month
+    card.year = "1"
+    assert_equal 1, card.year
+
+    card.month = ""
+    assert_nil card.month
+    card.year = ""
+    assert_nil card.year
+
+    card.month = nil
+    assert_nil card.month
+    card.year = nil
+    assert_nil card.year
+
+    card.start_month = "1"
+    assert_equal 1, card.start_month
+    card.start_year = "1"
+    assert_equal 1, card.start_year
   end
 end

@@ -45,10 +45,9 @@ module ActiveMerchant #:nodoc:
       def authorize(money, creditcard_or_datakey, options = {})
         requires!(options, :order_id)
         post = {}
-        add_payment_source(post, creditcard_or_datakey)
+        add_payment_source(post, creditcard_or_datakey, options)
         post[:amount]     = amount(money)
         post[:order_id]   = options[:order_id]
-        post[:cust_id]    = options[:customer]
         post[:crypt_type] = options[:crypt_type] || @options[:crypt_type]
         action = (post[:data_key].blank?) ? 'preauth' : 'res_preauth_cc'
         commit(action, post)
@@ -61,10 +60,9 @@ module ActiveMerchant #:nodoc:
       def purchase(money, creditcard_or_datakey, options = {})
         requires!(options, :order_id)
         post = {}
-        add_payment_source(post, creditcard_or_datakey)
+        add_payment_source(post, creditcard_or_datakey, options)
         post[:amount]     = amount(money)
         post[:order_id]   = options[:order_id]
-        post[:cust_id]    = options[:customer]
         post[:crypt_type] = options[:crypt_type] || @options[:crypt_type]
         action = (post[:data_key].blank?) ? 'purchase' : 'res_purchase_cc'
         commit(action, post)
@@ -111,7 +109,7 @@ module ActiveMerchant #:nodoc:
       # Moneris interface consistent with other gateways. (See +capture+ for
       # details.)
       def credit(money, authorization, options = {})
-        deprecated CREDIT_DEPRECATION_MESSAGE
+        ActiveMerchant.deprecated CREDIT_DEPRECATION_MESSAGE
         refund(money, authorization, options)
       end
 
@@ -148,13 +146,15 @@ module ActiveMerchant #:nodoc:
         sprintf("%.4i", creditcard.year)[-2..-1] + sprintf("%.2i", creditcard.month)
       end
 
-      def add_payment_source(post, source)
+      def add_payment_source(post, source, options)
         if source.is_a?(String)
           post[:data_key]   = source
+          post[:cust_id]    = options[:customer]
         else
           post[:pan]        = source.number
           post[:expdate]    = expdate(source)
           post[:cvd_value]  = source.verification_value if source.verification_value?
+          post[:cust_id]    = options[:customer] || source.name
         end
       end
 
@@ -257,16 +257,6 @@ module ActiveMerchant #:nodoc:
       def message_from(message)
         return 'Unspecified error' if message.blank?
         message.gsub(/[^\w]/, ' ').split.join(" ").capitalize
-      end
-
-      # Make a Ruby type out of the response string
-      def normalize(field)
-        case field
-          when "true"     then true
-          when "false"    then false
-          when '', "null" then nil
-          else field
-        end
       end
 
       def actions

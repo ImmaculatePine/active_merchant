@@ -36,7 +36,7 @@ module ActiveMerchant #:nodoc:
 
       def credit(money, identification_or_credit_card, options = {})
         if identification_or_credit_card.is_a?(String)
-          deprecated CREDIT_DEPRECATION_MESSAGE
+          ActiveMerchant.deprecated CREDIT_DEPRECATION_MESSAGE
           # Perform authorization reversal
           refund(money, identification_or_credit_card, options)
         else
@@ -195,17 +195,6 @@ module ActiveMerchant #:nodoc:
       def message_from(message)
         return 'Unspecified error' if message.blank?
         message.gsub(/[^\w]/, ' ').split.join(" ").capitalize
-      end
-
-      # Make a ruby type out of the response string
-      def normalize(field)
-        case field
-        when "true"   then true
-        when "false"  then false
-        when ""       then nil
-        when "null"   then nil
-        else field
-        end
       end
 
       def actions

@@ -85,7 +85,7 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 
 * [App55](https://www.app55.com/) - AU, BR, CA, CH, CL, CN, CO, CZ, DK, EU, GB, HK, HU, ID, IS, JP, KE, KR, MX, MY, NO, NZ, PH, PL, TH, TW, US, VN, ZA
 * [Authorize.Net CIM](http://www.authorize.net/) - US
-* [Authorize.Net](http://www.authorize.net/) - US, CA, GB
+* [Authorize.Net](http://www.authorize.net/) - AD, AT, AU, BE, BG, CA, CH, CY, CZ, DE, DK, ES, FI, FR, GB, GB, GI, GR, HU, IE, IT, LI, LU, MC, MT, NL, NO, PL, PT, RO, SE, SI, SK, SM, TR, US, VA
 * [Balanced](https://www.balancedpayments.com/) - US
 * [Banwire](http://www.banwire.com/) - MX
 * [Barclays ePDQ Extra Plus](http://www.barclaycard.co.uk/business/accepting-payments/epdq-ecomm/) - GB
@@ -94,8 +94,10 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 * [Beanstream.com](http://www.beanstream.com/) - CA, US
 * [BluePay](http://www.bluepay.com/) - US
 * [Braintree](http://www.braintreepaymentsolutions.com) - US, CA, AU, AD, AT, BE, BG, CY, CZ, DK, EE, FI, FR, GI, DE, GR, HU, IS, IM, IE, IT, LV, LI, LT, LU, MT, MC, NL, NO, PL, PT, RO, SM, SK, SI, ES, SE, CH, TR, GB
+* [BridgePay](http://www.bridgepaynetwork.com/) - CA, US
 * [CardSave](http://www.cardsave.net/) - GB
 * [CardStream](http://www.cardstream.com/) - GB
+* [Cashnet](http://www.higherone.com/) - US
 * [Cecabank](http://www.ceca.es/es/) - ES
 * [CertoDirect](http://www.certodirect.com/) - BE, BG, CZ, DK, DE, EE, IE, EL, ES, FR, IT, CY, LV, LT, LU, HU, MT, NL, AT, PL, PT, RO, SI, SK, FI, SE, GB
 * [Conekta](https://conekta.io) - MX
@@ -113,9 +115,11 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 * [Finansbank WebPOS](https://www.fbwebpos.com/) - US, TR
 * [First Pay](http://www.first-pay.com) - US
 * [FirstData Global Gateway e4](http://www.firstdata.com) - CA, US
+* [FirstGiving](http://www.firstgiving.com/) - US
 * [Garanti Sanal POS](https://sanalposweb.garanti.com.tr) - US, TR
 * [HDFC](http://www.hdfcbank.com/sme/sme-details/merchant-services/guzh6m0i) - IN
-* [IATSPayments](http://www.iatspayments.com/) - US, CA, GB
+* [Heartland Payment Systems](http://developer.heartlandpaymentsystems.com/SecureSubmit/) - US
+* [iATS Payments](http://home.iatspayments.com/) - AU, CA, CH, DE, DK, ES, FI, FR, GR, HK, IE, IT, JP, NL, NO, NZ, PT, SE, SG, TR, UK, US
 * [Inspire Commerce](http://www.inspiregateway.com) - US
 * [InstaPay](http://www.instapayllc.com) - US
 * [Iridium](http://www.iridiumcorp.co.uk/) - GB, ES
@@ -145,11 +149,12 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 * [Openpay](Openpay) - MX
 * [Optimal Payments](http://www.optimalpayments.com/) - CA, US, GB
 * [Orbital Paymentech](http://chasepaymentech.com/) - US, CA
+* [PagoFacil](http://www.pagofacil.net/) - MX
 * [PayGate PayXML](http://paygate.co.za/) - US, ZA
 * [PayJunction](http://www.payjunction.com/) - US
 * [PaySecure](http://www.commsecure.com.au/paysecure.shtml) - AU
 * [Paybox Direct](http://www.paybox.com/) - FR
-* [Payex](http://payex.com/) - DK, NO, SE
+* [Payex](http://payex.com/) - DK, FI, NO, SE
 * [PaymentExpress](http://www.paymentexpress.com/) - AU, CA, DE, ES, FR, GB, HK, IE, MY, NL, NZ, SG, US, ZA
 * [PAYMILL](https://paymill.com) - AD, AT, BE, BG, CH, CY, CZ, DE, DK, EE, ES, FI, FO, FR, GB, GI, GR, HU, IE, IL, IS, IT, LI, LT, LU, LV, MT, NL, NO, PL, PT, RO, SE, SI, SK, TR, VA
 * [PayPal Express Checkout](https://www.paypal.com/webapps/mpp/express-checkout) - US, CA, SG, AU
@@ -202,7 +207,7 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 * [2 Checkout](http://www.2checkout.com)
 * [A1Agregator](http://a1agregator.ru/) - RU
 * [Authorize.Net SIM](http://developer.authorize.net/api/sim/) - US
-* [Banca Sella GestPay](https://www.sella.it/banca/ecommerce/gestpay/gestpay.jsp)
+* [Banca Sella GestPay](https://www.gestpay.it/)
 * [Chronopay](http://www.chronopay.com)
 * [DirecPay](http://www.timesofmoney.com/direcpay/jsp/home.jsp)
 * [Direct-eBanking / sofortueberweisung.de by Payment-Networks AG](https://www.payment-network.com/deb_com_en/merchantarea/home) - DE, AT, CH, BE, UK, NL
@@ -214,6 +219,7 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 * [HiTRUST](http://www.hitrust.com.hk/)
 * [Moneybookers](http://www.moneybookers.com)
 * [Nochex](http://www.nochex.com)
+* [PagSeguro](http://www.pagseguro.com.br/) - BR
 * [Paxum](https://www.paxum.com/)
 * [PayPal Website Payments Standard](https://www.paypal.com/cgi-bin/webscr?cmd#_wp-standard-overview-outside)
 * [Paysbuy](https://www.paysbuy.com/) - TH
@@ -227,6 +233,7 @@ The [ActiveMerchant Wiki](http://github.com/Shopify/active_merchant/wikis) conta
 * [WebMoney](http://www.webmoney.ru) - RU
 * [WebPay](http://webpay.by/)
 * [WorldPay](http://www.worldpay.com)
+* [Yandex.Money](http://money.yandex.ru/) - RU
 
 ## Contributing
 

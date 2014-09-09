@@ -40,7 +40,7 @@ class MonerisTest < Test::Unit::TestCase
   def test_deprecated_credit
     @gateway.expects(:ssl_post).with(anything, regexp_matches(/txn_number>123<\//), anything).returns("")
     @gateway.expects(:parse).returns({})
-    assert_deprecation_warning(Gateway::CREDIT_DEPRECATION_MESSAGE, @gateway) do
+    assert_deprecation_warning(Gateway::CREDIT_DEPRECATION_MESSAGE) do
       @gateway.credit(@amount, "123;456", @options)
     end
   end
@@ -208,6 +208,22 @@ class MonerisTest < Test::Unit::TestCase
     end.check_request do |endpoint, data, headers|
       assert_no_match(%r{cvd_value>}, data)
       assert_no_match(%r{cvd_indicator>}, data)
+    end.respond_with(successful_purchase_response)
+  end
+
+  def test_customer_can_be_specified
+    stub_comms do
+      @gateway.purchase(@amount, @credit_card, order_id: "3", customer: "Joe Jones")
+    end.check_request do |endpoint, data, headers|
+      assert_match(%r{cust_id>Joe Jones}, data)
+    end.respond_with(successful_purchase_response)
+  end
+
+  def test_customer_not_specified_card_name_used
+    stub_comms do
+      @gateway.purchase(@amount, @credit_card, order_id: "3")
+    end.check_request do |endpoint, data, headers|
+      assert_match(%r{cust_id>Longbob Longsen}, data)
     end.respond_with(successful_purchase_response)
   end
 
