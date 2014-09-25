@@ -59,7 +59,7 @@ module ActiveMerchant #:nodoc:
             data = data.sort
             values = data.map {|key,val| val}
             signature_string = [values, @options[:secret]].flatten.join
-            # encode_string(signature_string)
+            encode_string(signature_string)
           end
           
           def generate_signature
@@ -78,14 +78,8 @@ module ActiveMerchant #:nodoc:
             "WMI_RESULT=RETRY&WMI_DESCRIPTION=#{message}"
           end
 
-          def encode_string(data,enc='cp1251')
-            if data.respond_to?(:encode!)
-              data.encode!('UTF-8', enc)
-            else    # for ruby 1.8
-              require 'iconv'
-              data = Iconv.new('utf-8', enc).iconv(data)
-            end
-            data
+          def encode_string(data, enc = 'Windows-1251')
+            data.to_s.encode(enc)
           end
 
           #def custom_fields
