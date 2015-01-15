@@ -8,7 +8,7 @@ module ActiveMerchant #:nodoc:
         autoload :Return, File.dirname(__FILE__) + '/w1/return.rb'
        
         mattr_accessor :service_url
-        self.service_url = 'https://merchant.w1.ru/checkout/default.aspx'
+        self.service_url = 'https://wl.walletone.com/checkout/checkout/Index'
 
         mattr_accessor :signature_parameter_name
         self.signature_parameter_name = 'WMI_SIGNATURE'
